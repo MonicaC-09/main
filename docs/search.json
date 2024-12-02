@@ -1,0 +1,107 @@
+[
+  {
+    "objectID": "Assignment 4.html",
+    "href": "Assignment 4.html",
+    "title": "Assignment 4",
+    "section": "",
+    "text": "Load in libraries\n\n\nBe sure they are installed first\nlibrary(tidyverse) library(hrbrthemes) library(gt) library(ggplot2) library(dplyr) library(tidyr) library(hrbrthemes) library(scales)\n\n\nNOTE: We use two datasets, one involving occupational data,\n\n\nanother dealing w/international violence\n\n\nRead in occupational data-set:\ndata2 &lt;- read.csv(“occs.csv”)\n\n\nChange variables:\nattach(data2) Occupation &lt;- as.factor(Occupation) SOC &lt;- as.factor(SOC)\n\n\nCumsum the chnage bar widths\ndata2\\(right &lt;- cumsum(data2\\)Hires) + 30*c(0:(nrow(data2)-1)) data2\\(left &lt;- data2\\)right - data2$Hires\n\n\nMake actual var-width barplot:\nggplot(data2, aes(ymin = 0)) + geom_rect(aes(xmin = left, xmax = right, ymax = Earnings, colour = Occupation, fill = Occupation)) + xlab(“# of Hires”) + ylab(“$/per Hour”) + ggtitle(“# of Hires vs. Wages in DFW (June 2024)”) + theme_ipsum() + theme(legend.position=“bottom”)\n\n\nNew graphs using international incident data-set:\n\n\nLoad international dataset:\ndata &lt;- read.csv(“oneside.csv”)\n\n\nIndia fat. chart (an extra chart):\n\n\nFilter data\nindia_data &lt;- data %&gt;% filter(location == “India”)\n\n\nSumm. estimates\nsummary_india &lt;- india_data %&gt;% group_by(year) %&gt;% summarise( avg_fatality = mean(best_fatality_estimate, na.rm = TRUE), low_fatality = mean(low_fatality_estimate, na.rm = TRUE), high_fatality = mean(high_fatality_estimate, na.rm = TRUE) )\n\n\nCreate a basic plot\nsummary_long &lt;- summary_india %&gt;% pivot_longer(cols = c(avg_fatality, low_fatality, high_fatality), names_to = “fatality_type”, values_to = “fatality”)\n\n\nMake enhanced plot\nggplot(summary_long, aes(x = year, y = fatality, color = fatality_type)) + geom_line(size = 1.2) + geom_point(size = 3) + geom_smooth(aes(group = fatality_type), method = “loess”, se = FALSE, linetype = “dotted”) + # Add smooth lines labs(title = “Fatality Estimates in India Over the Years”, subtitle = “Average, Low, and High Fatality Rates”, x = “Year”, y = “Fatality Estimates”, color = “Fatality Type”) + theme_minimal(base_size = 15) + # Increase base font size scale_color_manual(values = c(“avg_fatality” = “steelblue”, “low_fatality” = “forestgreen”, “high_fatality” = “red4”)) + # Use specified colors theme( legend.position = “top”, plot.title = element_text(face = “bold”, size = 20), plot.subtitle = element_text(size = 15), axis.title = element_text(face = “bold”), axis.text = element_text(size = 12, angle = 45, hjust = 1) # Slant x-axis labels ) + scale_x_continuous(breaks = seq(min(summary_long\\(year), max(summary_long\\)year), by = 1)) # Customize x-axis breaks\n\n\nMulti-Chart:\n\n\nList countries\nselected_countries &lt;- c(“India”, “Pakistan”, “Afghanistan”, “Nigeria”, “Yemen”, “Iraq”, “Burundi”, “Sierra Leonne”, “Colombia”, “Philippines”, “Mexico”)\n\n\nTable w/ embedded charts:\n\n\nFilter data\nfiltered_data &lt;- data %&gt;% filter(location %in% selected_countries)\n\n\nSumm. fatality\nsummary_data &lt;- filtered_data %&gt;% group_by(location, year) %&gt;% summarise( avg_fatality = mean(best_fatality_estimate, na.rm = TRUE) ) %&gt;% pivot_longer(cols = avg_fatality, names_to = “fatality_type”, values_to = “fatality”)\n\n\nCombine plots\nggplot(summary_data, aes(x = year, y = fatality, color = location, group = location)) + geom_line(size = 1.2) + geom_point(size = 3) + labs(title = “Average Fatality Estimates by Country Over the Years”, subtitle = “Selected Countries”, x = “Year”, y = “Average Fatality Estimates”, color = “Country”) + theme_minimal(base_size = 15) + scale_color_brewer(palette = “Set1”) + # Use a distinct color palette theme( legend.position = “bottom”, plot.title = element_text(face = “bold”, size = 20), plot.subtitle = element_text(size = 15), axis.title = element_text(face = “bold”), axis.text = element_text(size = 12, angle = 45, hjust = 1) ) + facet_wrap(~ location, scales = “free_y”) # Separate plots for each country with free y-scales\n\n\nA Barchart:\n\n\nreload international dataset as new df\nmydata &lt;- read.csv(“oneside.csv”) head(mydata) str(mydata)\n\n\nList new countries\nselected_countries &lt;- c(“India”, “Pakistan”, “Afghanistan”, “Nigeria”, “Yemen”, “Iraq”, “Burundi”, “Sierra Leone”, “Colombia”, “Philippines”, “Mexico”)\n\n\nFilter\nfiltered_data &lt;- mydata %&gt;% filter(location %in% selected_countries)\n\n\nSummarize\nsummary_data &lt;- filtered_data %&gt;% group_by(location) %&gt;% summarise( avg_fatality = mean(best_fatality_estimate, na.rm = TRUE), low_fatality = mean(low_fatality_estimate, na.rm = TRUE) ) %&gt;% pivot_longer(cols = c(avg_fatality, low_fatality), names_to = “fatality_type”, values_to = “fatality”)\n\n\nMake column chart\nggplot(summary_data, aes(x = location)) + geom_bar(aes(y = fatality, fill = fatality_type), position = position_dodge(width = 0.6), # Adjust width for overlap stat = “identity”, width = 0.6, color = “black”) + # Set bar width labs(title = “Fatality Estimates by Country”, x = “Country”, y = “Fatality Estimates”, fill = “Fatality Type”) + theme_minimal(base_size = 15) + scale_fill_manual(values = c(“avg_fatality” = “steelblue”, “low_fatality” = “forestgreen”)) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Slant x-axis labels\n\n\nSave option:\nggsave(“fatality_estimates_plot.png”, width = 10, height = 6)"
+  },
+  {
+    "objectID": "Introduction.html",
+    "href": "Introduction.html",
+    "title": "Assignment 1",
+    "section": "",
+    "text": "AIArtists.org. (2023). Generative art: 50 best examples, tools & artists (2021 guide). AIArtists.org. (https://www.aiartists.org/generative-art-design)\n\nGenerative Architecture by Michael Hansmeyer website:https://www.michael-hansmeyer.com/zauberfloete\nAnders Hoff Picture1.jpg\nMandelbrot Set created by creative.AI Picture2.jpg\n\n\n\nThe Housing Starts Historical Chart shows the macro level of housing since the 1960s by Macro Charts. The chart was made very concisely, the shadows to focus on where the housing dips it helps to draw the viewer to the most important facts. This chart could be better if the author had added y and x subtitles, chart title, and small caption on the upper right side to understand what the viewers is looking at, because without a presenter nor a paper to understand this chart. The view will have no way to understand what this chart is trying to show.\n\nhome"
+  },
+  {
+    "objectID": "Introduction.html#housing-starts-historical-chart",
+    "href": "Introduction.html#housing-starts-historical-chart",
+    "title": "Assignment 1",
+    "section": "",
+    "text": "The Housing Starts Historical Chart shows the macro level of housing since the 1960s by Macro Charts. The chart was made very concisely, the shadows to focus on where the housing dips it helps to draw the viewer to the most important facts. This chart could be better if the author had added y and x subtitles, chart title, and small caption on the upper right side to understand what the viewers is looking at, because without a presenter nor a paper to understand this chart. The view will have no way to understand what this chart is trying to show.\n\nhome"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "mbcepps6356",
+    "section": "",
+    "text": "GitHub\n  \n\n  \n  \n\n\n“This is the start of quarto website for my EPPS 6356: Data Vizualizuation class by Dr. Karl Ho. My name is Monica Campos, I am in my first semester of the Master of Science in Social Data Analytics and Research at the University of Texas at Dallas.”"
+  },
+  {
+    "objectID": "index.html#who-am-i",
+    "href": "index.html#who-am-i",
+    "title": "mbcepps6356",
+    "section": "",
+    "text": "“This is the start of quarto website for my EPPS 6356: Data Vizualizuation class by Dr. Karl Ho. My name is Monica Campos, I am in my first semester of the Master of Science in Social Data Analytics and Research at the University of Texas at Dallas.”"
+  },
+  {
+    "objectID": "Assignment5.html",
+    "href": "Assignment5.html",
+    "title": "Assignment5",
+    "section": "",
+    "text": "library(tidyr) library(ggplot2) library(dplyr)\n\nHistogram\n\n\nSet plotting margins\npar(mar=c(5, 4, 4, 2))\n\n\nCreate the histogram\nmpghist &lt;- hist(mtcars$mpg, freq = TRUE, breaks = 5, col = “gray80”, border = “black”, main = “Miles Per Gallon of Cars”, ylab = “Frequency”, xlab = “Miles Per Gallon (MPG)”)\n\n\nCreate density object\ndensitymt &lt;- density(mtcars$mpg)\n#Scale the data for density curve scaling &lt;- diff(mpghist\\(mids[1:2]) * length(mtcars\\)mpg) lines(densitymt\\(x,densitymt\\)y * scaling, col = “black”, lwd = 2)\ninstall.packages(‘svglite’) ggsave(“mpghist.svg”)\n\n\nBar Chart\ndata(“mtcars”) top5mpg &lt;- mtcars$mpg[1:5] carnames &lt;- row.names(mtcars)[1:5]\n\n\nI. Vertical\npar(las=1, mar=c(5, 12, 5, 3), cex=0.7) barplot(top5mpg, names.arg = carnames, horiz = TRUE, col = brewer.pal(length(carnames), “Greens”), main = “Miles Per Gallon of Top 5 Cars”, xlab = “Miles Per Gallon (MPG)”, xlim = c(0, max(top5mpg) + 5))\n\n\nII. Horizental\npar(las=1, mar=c(6, 5, 7, 5), cex=0.8) barplot(top5mpg, names.arg = carnames, horiz = FALSE, col = brewer.pal(length(carnames), “Greens”), main = “Miles Per Gallon of Top 5 Cars”, ylab = “Miles Per Gallon (MPG)”, xlab = “Car Names”, ylim = c(0, max(top5mpg) + 5)) —\n\n\n\n\n\n\n\n\nPie Chart\nrequire(RColorBrewer) View(mtcars) top5 &lt;- setNames(mtcars$mpg[1:5],row.names(mtcars)[1:5]) print(top5) indices &lt;- top5 !=0 adjust pie chart to show mpg in the slices pie(top5[indices], labels = top5[indices], col = brewer.pal(length(top5[indices]), “Set1”), main = “Top Five Reliable MPG cars”)\npar(mar=c(4, 3, 4, 3), xpd=FALSE, cex=0.8) legend(“bottomleft”, legend = names(top5)[indices], fill = brewer.pal(length(top5[indices]), “Set1”), pch = 7)\n\n\n\n\n\n\nBoxplot\ndata = mtcars\n\n\nSet plotting parameters\npar(las=1, mar=c(6, 5, 7, 5), cex=0.8)\n\n\nCreate the boxplot for Miles per Gallon by number of Cylinders from mpg data\nboxplot(mpg ~ cyl, data = mtcars, xlab = “number of cylinders”, ylab = “Miles per Gallon”, main = “Reliable Cars mpg vs cyl”)\n\n\n\n\nScatterplot\nlibrary(ggplot2) ggplot(data = mpg, mapping = aes(x = displ, y = hwy, size = displ)) + geom_point(color = “blue”, pch = 16, size = 1.5)+ geom_smooth(method = “loess”, color = “black”) + scale_x_log10() + xlab(“MPG on Highway”) + facet_wrap(~drv, nrow=3) + # drv is the type of drive train, where f = front-wheel drive, r = rear wheel drive, 4 = 4wd theme_bw() + theme(text=element_text(size=10, family=“Palatino”))"
+  },
+  {
+    "objectID": "sub2.html",
+    "href": "sub2.html",
+    "title": "sub2",
+    "section": "",
+    "text": "This is a callout block\n\n\n\n\ncol1\ncol2\ncol3\n\n\n\n\nvalue1\nvalue2\nvalue3\n\n\nvalue1\nvalue2\nvalue3\n\n\nvalue1\nvalue2\nvalue3\n\n\n\na simple knowledge: \\[Y = \\alpha + \\beta \\cdot  X\\] this very simple, lets do math\na simple knowledge: \\[Y = \\alpha + \\beta \\cdot  X + \\epsilon\\] this very simple, lets do math\na simple knowledge: \\[\\hat{Y} = \\alpha + \\beta \\cdot  X + \\epsilon\\frac{1}{2}\\] this very simple, lets do math\n$$\n^{a}_{i=1} =\n$$\n\\[\n\\begin{bmatrix}\n1 & 0 & 0 & 0 \\\\\n0 & 1 & 0 & 0 \\\\\n0 & 0 & 0 & 0 \\\\\n\\end{bmatrix}\n\\] home"
+  },
+  {
+    "objectID": "Assignment2.html#start-plotting-from-basics",
+    "href": "Assignment2.html#start-plotting-from-basics",
+    "title": "Assignment 2",
+    "section": "Start plotting from basics",
+    "text": "Start plotting from basics"
+  },
+  {
+    "objectID": "Assignment3.html",
+    "href": "Assignment3.html",
+    "title": "Assignment3",
+    "section": "",
+    "text": "plot(pressure, pch=20) # Can you change pch? text(150, 600, “Pressure (mm Hg)(Celsius)”)"
+  },
+  {
+    "objectID": "Assignment3.html#simple-version",
+    "href": "Assignment3.html#simple-version",
+    "title": "Assignment3",
+    "section": "Simple version",
+    "text": "Simple version\nplot(anscombe\\(x1,anscombe\\)y1) summary(anscombe)"
+  },
+  {
+    "objectID": "Assignment3.html#fancy-version-per-help-file",
+    "href": "Assignment3.html#fancy-version-per-help-file",
+    "title": "Assignment3",
+    "section": "Fancy version (per help file)",
+    "text": "Fancy version (per help file)\nff &lt;- y ~ x mods &lt;- setNames(as.list(1:4), paste0(“lm”, 1:4))"
+  },
+  {
+    "objectID": "Assignment6.html",
+    "href": "Assignment6.html",
+    "title": "Assigment 6",
+    "section": "",
+    "text": "https://www.shinyapps.io/admin/#/application/13352347:~:text=https%3A//monicac%2D09.shinyapps.io/Assignment6MCampos/"
+  },
+  {
+    "objectID": "Assignment7.html",
+    "href": "Assignment7.html",
+    "title": "Assignment7",
+    "section": "",
+    "text": "https://cometmail-my.sharepoint.com/:u:/g/personal/tjm130330_utdallas_edu/EYPzG7sgQM5Jp-E7U_zxy0sBTKteyaZKcx0cqsl7apN0mw?e=hVcFH0"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "My Quarto",
+    "section": "",
+    "text": "```"
+  },
+  {
+    "objectID": "Assignment8.html",
+    "href": "Assignment8.html",
+    "title": "Assignment8",
+    "section": "",
+    "text": "RPubs Dashboard [https://rpubs.com/monicac-09/1252351]"
+  }
+]
